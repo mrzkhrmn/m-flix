@@ -1,11 +1,14 @@
 import { fetchMovieAPI } from "../lib/api";
-import { TV } from "../types/Tv";
+import { TV, TVResponse } from "../types/tv";
 
 export const PopularTVs = async () => {
-  const { results: popularTVs } = await fetchMovieAPI("/tv/popular", {
-    language: "en-US",
-    page: 1,
-  });
+  const { results: popularTVs } = await fetchMovieAPI<TVResponse>(
+    "/tv/popular",
+    {
+      language: "en-US",
+      page: 1,
+    }
+  );
 
   return (
     <div>
