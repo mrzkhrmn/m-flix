@@ -1,11 +1,23 @@
-import { PopularMovies } from "./components/PopularMovies";
-import { PopularTVs } from "./components/PopularTVs";
+import Link from "next/link";
+import { HeroSection } from "./components/HeroSection";
+import { fetchMovieAPI } from "./lib/api";
 
-export default function Home() {
+async function getPopularMovies() {
+  const { results: popularMovies } = await fetchMovieAPI("/movie/popular", {
+    language: "en-US",
+    page: 1,
+  });
+
+  return popularMovies;
+}
+
+export default async function Home() {
+  const popularMovies = await getPopularMovies();
+  const initialMovie = popularMovies[4];
+
   return (
     <div>
-      <PopularMovies />
-      <PopularTVs />
+      <HeroSection initialMovie={initialMovie} popularMovies={popularMovies} />
     </div>
   );
 }
