@@ -14,7 +14,5 @@ export default function MovieGenres({ genreIds }: MovieGenresProps) {
     getGenreNames(genreIds).then((names) => setGenreNames(names));
   }, [genreIds]);
 
-  console.log(genreNames);
-
   return <p className="text-white font-light">{genreNames.join(", ")}</p>;
 }

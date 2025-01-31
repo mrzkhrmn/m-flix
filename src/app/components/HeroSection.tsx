@@ -4,6 +4,7 @@ import React, { useRef, useState } from "react";
 import { Movie } from "../types/movie";
 import MovieGenres from "./MovieGenres";
 import { FaPlay } from "react-icons/fa";
+import { FaArrowRight, FaArrowLeft } from "react-icons/fa6";
 
 interface HeroSectionProps {
   initialMovie: Movie;
@@ -16,7 +17,6 @@ export const HeroSection = ({
 }: HeroSectionProps) => {
   const [selectedMovie, setSelectedMovie] = useState<Movie>(initialMovie);
   const [selectedMovieIndex, setSelectedMovieIndex] = useState(4);
-  const [scrollPosition, setScrollPosition] = useState(0);
   const containerRef = useRef(null);
 
   const backdropUrl = `https://image.tmdb.org/t/p/original/${selectedMovie.backdrop_path}`;
@@ -25,21 +25,21 @@ export const HeroSection = ({
     if (i !== selectedMovieIndex) {
       setSelectedMovieIndex(i);
       setSelectedMovie(movie);
+      scroll(i);
     }
   };
 
-  const scroll = (direction: string, scrollAmount: number) => {
-    if (direction === "left" && selectedMovieIndex > 0) {
-      setSelectedMovieIndex((prev) => prev - 1);
-    } else {
-      setSelectedMovieIndex((prev) => prev + 1);
-    }
-    setSelectedMovie(popularMovies[selectedMovieIndex]);
-    const newScrollPosition = scrollPosition + scrollAmount;
+  const scroll = (targetIndex: number) => {
+    const indexDifference = targetIndex - selectedMovieIndex;
 
-    setScrollPosition(newScrollPosition);
+    const movieWidth = 225;
+    const scrollAmount = indexDifference * movieWidth;
 
+    const newScrollPosition = containerRef.current.scrollLeft + scrollAmount;
     containerRef.current.scrollLeft = newScrollPosition;
+
+    setSelectedMovieIndex(targetIndex);
+    setSelectedMovie(popularMovies[targetIndex]);
   };
 
   return (
@@ -54,7 +54,6 @@ export const HeroSection = ({
       <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent"></div>
       <div className="absolute inset-0 bg-gradient-to-l from-black/30 via-transparent to-transparent"></div>
-      {/* Sol tarafa daha yoğun gölge eklemek için ekstra gradient */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-transparent"></div>
       <div className="w-full relative  h-screen mx-auto z-40  flex flex-col">
         <div className="w-[1440px] mx-auto mt-40 h-[345px]">
@@ -94,12 +93,22 @@ export const HeroSection = ({
             </button>
           </div>
         </div>
-        <div className="text-white flex items-center gap-2">
-          <button onClick={() => scroll("left", -225)}>Left</button>
-          <button onClick={() => scroll("right", 225)}>Right</button>
+        <div className="flex items-center gap-2 ml-12">
+          <button
+            className="text-white bg-gray-800 p-2"
+            onClick={() => scroll(selectedMovieIndex - 1)}
+          >
+            <FaArrowLeft size={24} />
+          </button>
+          <button
+            className="text-white bg-gray-800 hover:bg-gray-900 p-2"
+            onClick={() => scroll(selectedMovieIndex + 1)}
+          >
+            <FaArrowRight size={24} />
+          </button>
         </div>
         <div
-          className="flex mt-6 items-start gap-4  overflow-hidden  scroll-smooth  flex-col"
+          className="flex  items-start gap-4  overflow-hidden  scroll-smooth  flex-col mt-2"
           ref={containerRef}
         >
           <div className="flex  items-start gap-4 " ref={containerRef}>
